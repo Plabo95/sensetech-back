@@ -1,4 +1,4 @@
-{ 
+data = { 
  "SerNo": 100482, 
  "IMEI": "351579050616323", 
  "ICCID": "89610164556427000029", 
@@ -87,3 +87,31 @@
  } 
  ] 
 }
+device = {
+    'serNo': data['SerNo'],
+    'imei': data['IMEI'],
+    'iccid': data['ICCID'],
+    'prodId': data['ProdId'],
+    'fw': data['FW'],
+}
+
+records = data['Records']
+
+for record in records:
+    if record['Fields']:
+        gps_data = record['Fields'][0]
+        analogue_data = record['Fields'][2]['AnalogueData']
+        record_sample = {
+            "serNo": device['serNo'],   #Device foreignkey
+            "seqNo": record['SeqNo'],   #Record sequence number
+            "reason": record['Reason'],
+            "dateUTC": record['DateUTC'],
+            "lat": gps_data['Lat'],
+            "long": gps_data['Long'],
+            "alt": gps_data['Alt'],
+            "voltage": analogue_data['1'],
+            "temp": analogue_data['3'],
+        }
+
+print(record_sample)
+#print(records)

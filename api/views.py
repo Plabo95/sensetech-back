@@ -11,22 +11,32 @@ from rest_framework.response import Response
 # Create your views here.
 @api_view(['POST'])        
 def receiveData(request):
+    
     device = {
-        'SerNo': request.data['SerNo'],
-        'IMEI': request.data['IMEI'],
-        'ICCID': request.data['ICCID'],
-        'ProdId': request.data['ProdId'],
-        'FW': request.data['FW'],
+    'serNo': data['SerNo'],
+    'imei': data['IMEI'],
+    'iccid': data['ICCID'],
+    'prodId': data['ProdId'],
+    'fw': data['FW'],
     }
-    records = dict(request.data['Records'][0])
-    print('Hay ', len(records), '  records')
-    #for i in range(len(records)):
-    print(records)
-        
-        #if(len(records['Fields']) > 0):
-            #gps_data = records[i]['Fields'][0]
-            #analogue_data = records[i]['Fields'][2]
-            #print(gps_data)
+
+    records = data['Records']
+
+    for record in records:
+        if record['Fields']:
+            gps_data = record['Fields'][0]
+            analogue_data = record['Fields'][2]['AnalogueData']
+            record_sample = {
+                "serNo": device['serNo'],   #Device foreignkey
+                "seqNo": record['SeqNo'],   #Record sequence number
+                "reason": record['Reason'],
+                "dateUTC": record['DateUTC'],
+                "lat": gps_data['Lat'],
+                "long": gps_data['Long'],
+                "alt": gps_data['Alt'],
+                "voltage": analogue_data['1'],
+                "temp": analogue_data['3'],
+            }
     
     return Response()
 
