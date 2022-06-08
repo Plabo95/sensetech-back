@@ -3,8 +3,8 @@ from django.db.models import *
 
 
 class Device(models.Model):
-    name = models.CharField(("name"),max_length=255,)
     serNo = models.CharField(("serial number"),max_length=255,help_text=("Device serial number"),unique=True,primary_key=True)
+    name = models.CharField(("name"),max_length=255, blank=True, null= True)
     iccid = models.CharField(("SIM serial number"),max_length=255,help_text=("SIM serial number"),)
     imei = models.CharField(("Modem IMEI"),max_length=255,help_text=("Modem IMEI"),)
     prodId = models.CharField(("Product TYPE/ID"),max_length=255,help_text=("Product ID"),)

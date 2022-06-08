@@ -12,22 +12,32 @@ from rest_framework.response import Response
 @api_view(['POST'])        
 def receiveData(request):
     
-    device = {
-    'serNo': data['SerNo'],
-    'imei': data['IMEI'],
-    'iccid': data['ICCID'],
-    'prodId': data['ProdId'],
-    'fw': data['FW'],
+    errors = {
+        'device': 'No errors',
+        'record': 'No errors',     
     }
 
-    records = data['Records']
+    device = {
+    'serNo': request.data['SerNo'],
+    'imei': request.data['IMEI'],
+    'iccid': request.data['ICCID'],
+    'prodId': request.data['ProdId'],
+    'fw': request.data['FW'],
+    }
+    device_serializer = DeviceSerializer(data = device)
+    if(device_serializer.is_valid()):
+        device_serializer.save()
+    else:
+        errors['device'] = device_serializer.errors
+
+    records = request.data['Records']
 
     for record in records:
         if record['Fields']:
             gps_data = record['Fields'][0]
             analogue_data = record['Fields'][2]['AnalogueData']
             record_sample = {
-                "serNo": device['serNo'],   #Device foreignkey
+                "device": device['serNo'],   #Device foreignkey
                 "seqNo": record['SeqNo'],   #Record sequence number
                 "reason": record['Reason'],
                 "dateUTC": record['DateUTC'],
@@ -37,8 +47,13 @@ def receiveData(request):
                 "voltage": analogue_data['1'],
                 "temp": analogue_data['3'],
             }
-    
-    return Response()
+        record_serializer = RecordSerializer(data = record_sample)
+        if(record_serializer.is_valid()):
+            record_serializer.save()
+        else:
+            errors['record'] = record_serializer.errors
+
+    return Response(errors, status=status.HTTP_201_CREATED)
 
 
 
