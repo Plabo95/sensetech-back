@@ -112,6 +112,5 @@ for record in records:
             "voltage": analogue_data['1'],
             "temp": analogue_data['3'],
         }
-
-print(record_sample)
+        print(record_sample)
 #print(records)
